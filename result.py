@@ -23,7 +23,7 @@ for file in glob("tessdata\\*.traineddata"):
         print(f"Copying {file} to {os.getenv('TESSERACT_DIR')}tessdata\\")
 
 
-def result_ocr(img: Image.Image):
+def __result_ocr(img: Image.Image):
     engines = pyocr.get_available_tools()
     engine = engines[0]
 
@@ -38,7 +38,7 @@ def result_ocr(img: Image.Image):
     return txt
 
 
-def format_result(txt: str):
+def __format_result(txt: str):
     lines = txt.replace(" ", "").split("\n")
     pattern = re.compile(r"^\d*px\d*(<\d*>)?x\d*x\d*")
     value = []
@@ -50,7 +50,7 @@ def format_result(txt: str):
     return tuple(value)
 
 
-def crop_result(img: np.ndarray):
+def __crop_result(img: np.ndarray):
     img = img[300:-350, -280:-25]
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
     return img
@@ -60,9 +60,9 @@ def get_result_from_image_path(img_path: str):
     img = cv2.imread(img_path, 0)
     if img is None:
         raise Exception("Path is invalid")
-    results = crop_result(img)
-    txt = result_ocr(Image.fromarray(results))
-    return format_result(txt)
+    results = __crop_result(img)
+    txt = __result_ocr(Image.fromarray(results))
+    return __format_result(txt)
 
 
 if __name__ == '__main__':
