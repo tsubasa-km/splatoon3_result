@@ -30,33 +30,44 @@ def result_ocr(img: Image.Image):
     langs = engine.get_available_languages()
     if "spl" not in langs:
         raise Exception("Language not supported")
-    txt = engine.image_to_string(img, lang="spl")
+    txt = engine.image_to_string(
+        img,
+        lang="spl",
+        builder=pyocr.builders.TextBuilder(tesseract_layout=6)
+    )
     return txt
 
 
 def format_result(txt: str):
-    lines = txt.replace(" ","").split("\n")
+    lines = txt.replace(" ", "").split("\n")
     pattern = re.compile(r"^\d*px\d*(<\d*>)?x\d*x\d*")
     value = []
     for line in lines:
         if pattern.match(line):
-            splat, ka, d, sp = line.replace("p","").split("x")
-            k, a = ka.replace(">","").split("<") if "<" in ka else (ka, "0")
+            splat, ka, d, sp = line.replace("p", "").split("x")
+            k, a = ka.replace(">", "").split("<") if "<" in ka else (ka, "0")
             value.append((int(k), int(a), int(d), int(sp), int(splat)))
-    return value
+    return tuple(value)
 
 
 def crop_result(img: np.ndarray):
-    img = img[300:-350,-280:-25]
+    img = img[300:-350, -280:-25]
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
     return img
 
 
+def get_result_from_image_path(img_path: str):
+    img = cv2.imread(img_path, 0)
+    if img is None:
+        raise Exception("Path is invalid")
+    results = crop_result(img)
+    txt = result_ocr(Image.fromarray(results))
+    return format_result(txt)
+
+
 if __name__ == '__main__':
-    for i in range(1,6):
-        img = cv2.imread(f"{SCREENSHOT_DIR}/{i}.jpg")
-        if img is None:
-            raise Exception("Image not found")
-        results = crop_result(img)
-        txt = result_ocr(Image.fromarray(results))
-        print(format_result(txt))
+    for i in range(1, 6):
+        result = get_result_from_image_path(f"{SCREENSHOT_DIR}/{i}.jpg")
+        if len(result) != 8:
+            raise Exception(f"Invalid result. length :{len(result)}")
+        print(result)
