@@ -20,8 +20,8 @@ pyocr.tesseract.TESSERACT_CMD = os.getenv(
 
 for file in glob("tessdata\\*.traineddata"):
     if not os.path.exists(os.getenv('TESSERACT_DIR')+file):
-        shutil.copy2(file, os.getenv('TESSERACT_DIR'))
-        print(f"Copying {file} to {os.getenv('TESSERACT_DIR')}")
+        shutil.copy2(file, f"{os.getenv('TESSERACT_DIR')}tessdata\\")
+        print(f"Copying {file} to {os.getenv('TESSERACT_DIR')}tessdata\\")
 
 
 def result_ocr(img: Image.Image):
@@ -36,32 +36,34 @@ def result_ocr(img: Image.Image):
 
 
 def format_result(txt: str):
-    ka, d, s = txt.replace(" ", "").split("x", 2)
-    k, a = ka[:-1].split("<")
-    return k, a, d, s
+    lines = txt.replace(" ","").split("\n")
+    pattern = re.compile(r"^\d*px\d*(<\d*>)?x\d*x\d*")
 
 
 def crop_result(img: np.ndarray):
-    img = img[300:-350, -193:-25]
+    img = img[300:-350,-280:-25]
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
-    return [
-        img[83:110, :],
-        img[181:208, :],
-        img[278:305, :],
-        img[376:403, :],
-        img[530:557, :],
-        img[627:654, :],
-        img[725:752, :],
-        img[822:849, :],
-    ]
+    # return [
+    #     img[83:110, :],
+    #     img[181:208, :],
+    #     img[278:305, :],
+    #     img[376:403, :],
+    #     img[530:557, :],
+    #     img[627:654, :],
+    #     img[725:752, :],
+    #     img[822:849, :],
+    # ]
+    return img
 
 
 if __name__ == '__main__':
-    img = cv2.imread(SCREENSHOT_DIR+"/5.jpg")
+    img = cv2.imread(SCREENSHOT_DIR+"/1.jpg")
     if img is None:
         raise Exception("Image not found")
     results = crop_result(img)
-    for result in results:
-        result = Image.fromarray(result)
-        txt = result_ocr(result)
-        print(format_result(txt))
+    # for result in results:
+    #     result = Image.fromarray(result)
+    #     txt = result_ocr(result)
+    #     print(format_result(txt))
+    txt = result_ocr(Image.fromarray(results))
+    print(format_result(txt))
