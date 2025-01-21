@@ -45,14 +45,14 @@ def crop_result(img: np.ndarray):
     img = img[300:-350, -193:-25]
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
     return [
-        img[83:103, :],
-        img[181:201, :],
-        img[278:298, :],
-        img[376:396, :],
-        img[530:550, :],
-        img[627:647, :],
-        img[725:745, :],
-        img[822:842, :],
+        img[83:110, :],
+        img[181:208, :],
+        img[278:305, :],
+        img[376:403, :],
+        img[530:557, :],
+        img[627:654, :],
+        img[725:752, :],
+        img[822:849, :],
     ]
 
 
