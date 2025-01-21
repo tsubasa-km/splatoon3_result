@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import matplotlib.pyplot as plt
 import pyocr.builders
 from glob import glob
 from PIL import Image
@@ -8,6 +9,9 @@ import pyocr
 import cv2
 import os
 import re
+
+
+SCREENSHOT_DIR = "screenshots"
 
 load_dotenv()
 
@@ -32,7 +36,9 @@ def result_ocr(img: Image.Image):
 
 
 def format_result(txt: str):
-    return txt.replace(" ", "")[1:].split("x")
+    ka, d, s = txt.replace(" ", "").split("x", 2)
+    k, a = ka[:-1].split("<")
+    return k, a, d, s
 
 
 def crop_result(img: np.ndarray):
@@ -51,8 +57,9 @@ def crop_result(img: np.ndarray):
 
 
 if __name__ == '__main__':
-    img = cv2.imread(
-        "splatoon3-results\Screenshot_20241128_225658_Nintendo Switch Online.jpg")
+    img = cv2.imread(SCREENSHOT_DIR+"/5.jpg")
+    if img is None:
+        raise Exception("Image not found")
     results = crop_result(img)
     for result in results:
         result = Image.fromarray(result)
