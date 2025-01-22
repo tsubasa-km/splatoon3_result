@@ -1,41 +1,11 @@
-from dotenv import load_dotenv
-import pyocr.builders
-from glob import glob
 from PIL import Image
 import numpy as np
-import shutil
-import pyocr
 import cv2
-import os
 import re
 
+from ocr import ocr
 
 SCREENSHOT_DIR = "screenshots"
-
-load_dotenv()
-
-pyocr.tesseract.TESSERACT_CMD = os.getenv(
-    'TESSERACT_DIR')+"\\tesseract.exe"
-
-for file in glob("tessdata\\*.traineddata"):
-    if not os.path.exists(os.getenv('TESSERACT_DIR')+file):
-        shutil.copy2(file, f"{os.getenv('TESSERACT_DIR')}tessdata\\")
-        print(f"Copying {file} to {os.getenv('TESSERACT_DIR')}tessdata\\")
-
-
-def __result_ocr(img: Image.Image):
-    engines = pyocr.get_available_tools()
-    engine = engines[0]
-
-    langs = engine.get_available_languages()
-    if "spl" not in langs:
-        raise Exception("Language not supported")
-    txt = engine.image_to_string(
-        img,
-        lang="spl",
-        builder=pyocr.builders.TextBuilder(tesseract_layout=6)
-    )
-    return txt
 
 
 def __format_result(txt: str):
@@ -61,7 +31,7 @@ def get_result_from_image_path(img_path: str):
     if img is None:
         raise Exception("Path is invalid")
     results = __crop_result(img)
-    txt = __result_ocr(Image.fromarray(results))
+    txt = ocr(Image.fromarray(results), "spl_result")
     return __format_result(txt)
 
 

@@ -44,7 +44,7 @@ def display_results(image, keypoints, hist):
     plt.show()
 
 
-def get_icon_features(image):
+def get_features(image):
     """画像の特徴量を抽出"""
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     keypoints, descriptors = extract_features(gray_image)
@@ -53,7 +53,7 @@ def get_icon_features(image):
     return keypoints, descriptors, color_hist
 
 
-def compare_icons(features_a, features_b):
+def compare_features(features_a, features_b):
     """2つの画像の特徴量を比較し、形状と色の類似度を計算"""
     keypoints_a, descriptors_a, color_hist_a = features_a
     keypoints_b, descriptors_b, color_hist_b = features_b

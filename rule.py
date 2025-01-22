@@ -1,6 +1,6 @@
 import cv2
 
-from image import get_icon_features, compare_icons, calculate_overall_similarity
+from image import get_features, compare_features, calculate_overall_similarity
 
 
 RULE_PATHS = {
@@ -19,8 +19,8 @@ def get_rule_name(image):
     image = crop_rule(image)
     for name, path in RULE_PATHS.items():
         rule = cv2.imread(path)
-        features = get_icon_features(image), get_icon_features(rule)
-        shape_similarity, color_similarity = compare_icons(*features)
+        features = get_features(image), get_features(rule)
+        shape_similarity, color_similarity = compare_features(*features)
         overall_similarity = calculate_overall_similarity(
             shape_similarity, color_similarity)
         if overall_similarity > 0.9:
