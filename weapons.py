@@ -6,12 +6,6 @@ from image import get_icon_features, compare_icons, calculate_overall_similarity
 
 __circles = None
 
-orb = cv2.ORB_create(
-    # nfeatures=1000,
-    scaleFactor=1.2,
-    edgeThreshold=15
-)
-
 
 def __mode(arr: np.ndarray) -> any:
     unique, counts = np.unique(arr, return_counts=True)
