@@ -2,7 +2,7 @@ import pytest
 import cv2
 
 from modules.xp import get_xp
-from modules.results import get_result_from_image
+from modules.results import get_result
 # from modules.weapons import get_icon_features
 from modules.rule import get_rule_name
 
@@ -50,7 +50,7 @@ def test_get_xp(image, expected):
     )),
 ])
 def test_get_result_from_image_path(image, expected):
-    assert get_result_from_image(image) == expected
+    assert get_result(image) == expected
 
 
 @pytest.mark.parametrize(("image", "expected"), [

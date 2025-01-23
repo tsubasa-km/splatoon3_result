@@ -46,8 +46,8 @@ def __crop_icons(img, circles):
 
 def get_icon_features(image):
     """アイコンの特徴量を取得"""
-    weapon = __crop_icons(*__detect_weapons(image))
-    return get_features(weapon)
+    weapons = __crop_icons(*__detect_weapons(image))
+    return [get_features(weapon) for weapon in weapons]
 
 
 if __name__ == "__main__":
