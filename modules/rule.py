@@ -1,6 +1,6 @@
 import cv2
 
-from image import get_features, compare_features, calculate_overall_similarity
+from modules.image import get_features, compare_features, calculate_overall_similarity
 
 
 RULE_PATHS = {
@@ -11,12 +11,12 @@ RULE_PATHS = {
 }
 
 
-def crop_rule(image: cv2.Mat):
+def __crop_rule(image: cv2.Mat):
     return image[50:130, 200:540]
 
 
 def get_rule_name(image):
-    image = crop_rule(image)
+    image = __crop_rule(image)
     for name, path in RULE_PATHS.items():
         rule = cv2.imread(path)
         features = get_features(image), get_features(rule)

@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import re
 
-from ocr import ocr
+from modules.ocr import ocr
 
 SCREENSHOT_DIR = "screenshots"
 
@@ -26,18 +26,16 @@ def __crop_result(img: np.ndarray):
     return img
 
 
-def get_result_from_image_path(img_path: str):
-    img = cv2.imread(img_path, 0)
-    if img is None:
-        raise Exception("Path is invalid")
-    results = __crop_result(img)
+def get_result_from_image(image):
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    results = __crop_result(image)
     txt = ocr(Image.fromarray(results), "spl_result")
     return __format_result(txt)
 
 
 if __name__ == '__main__':
     for i in range(1, 6):
-        result = get_result_from_image_path(f"{SCREENSHOT_DIR}/{i}.jpg")
+        result = get_result_from_image(f"{SCREENSHOT_DIR}/{i}.jpg")
         if len(result) != 8:
             raise Exception(f"Invalid result. length :{len(result)}")
         print(result)

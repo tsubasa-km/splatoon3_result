@@ -1,13 +1,16 @@
 import cv2
 import numpy as np
 from PIL import Image
+import re
 
-from ocr import ocr
+from modules.ocr import ocr
 
 
 def get_xp(image) -> float:
     image = image[-350:-310, 315:500]
     ocr_text = ocr(Image.fromarray(image), "spl_xp")
+    if re.match(r'Xパワー \d*', ocr_text) is None:
+        raise Exception(f"Invalid image: {ocr_text}")
     return float(ocr_text.replace('Xパワー', ''))
 
 

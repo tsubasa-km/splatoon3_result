@@ -9,14 +9,12 @@ orb = cv2.ORB_create(
 )
 
 
-def extract_features(image):
-    """形状特徴量（ORB）を抽出"""
+def __extract_features(image):
     keypoints, descriptors = orb.detectAndCompute(image, None)
     return keypoints, descriptors
 
 
-def extract_color_histogram(image):
-    """色ヒストグラムを抽出"""
+def __extract_color_histogram(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     hist = cv2.calcHist([hsv_image], [0, 1], None, [50, 60], [
                         0, 180, 0, 256])  # H:50, S:60
@@ -24,8 +22,7 @@ def extract_color_histogram(image):
     return hist
 
 
-def display_results(image, keypoints, hist):
-    """抽出結果を表示"""
+def __display_results(image, keypoints, hist):
     keypoint_image = cv2.drawKeypoints(
         image, keypoints, None, color=(0, 255, 0))
 
@@ -47,8 +44,8 @@ def display_results(image, keypoints, hist):
 def get_features(image):
     """画像の特徴量を抽出"""
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    keypoints, descriptors = extract_features(gray_image)
-    color_hist = extract_color_histogram(image)
+    keypoints, descriptors = __extract_features(gray_image)
+    color_hist = __extract_color_histogram(image)
     # display_results(image, keypoints, color_hist)
     return keypoints, descriptors, color_hist
 

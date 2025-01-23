@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-from image import get_features, compare_features, calculate_overall_similarity
+from modules.image import get_features, compare_features, calculate_overall_similarity
 
 __circles = None
 
@@ -12,7 +12,7 @@ def __mode(arr: np.ndarray) -> any:
     return unique[np.argmax(counts)]
 
 
-def detect_weapons(image):
+def __detect_weapons(image):
     """武器アイコンを検出"""
     global __circles
     image = image[300:-350, 10:120]
@@ -35,7 +35,7 @@ def detect_weapons(image):
     return image, __circles
 
 
-def crop_icons(img, circles):
+def __crop_icons(img, circles):
     """アイコンを切り抜く"""
     crops = []
     for x, y, r in circles:
@@ -46,12 +46,12 @@ def crop_icons(img, circles):
 
 def get_icon_features(image):
     """アイコンの特徴量を取得"""
-    weapon = crop_icons(*detect_weapons(image))
+    weapon = __crop_icons(*__detect_weapons(image))
     return get_features(weapon)
 
 
 if __name__ == "__main__":
-    weapons = crop_icons(*detect_weapons(cv2.imread(f"screenshots/1.jpg")))
+    weapons = __crop_icons(*__detect_weapons(cv2.imread(f"screenshots/1.jpg")))
     features = [get_features(icon) for icon in weapons]
     for w1 in range(len(weapons)):
         for w2 in range(w1 + 1, len(weapons)):
