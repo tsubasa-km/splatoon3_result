@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from modules.image import get_features, compare_features, calculate_overall_similarity
 
 __circles = None
@@ -53,6 +56,9 @@ def get_icon_features(image):
 if __name__ == "__main__":
     weapons = __crop_icons(*__detect_weapons(cv2.imread(f"screenshots/1.jpg")))
     features = [get_features(icon) for icon in weapons]
+    from pprint import pprint
+    pprint(features)
+    sys.exit()
     for w1 in range(len(weapons)):
         for w2 in range(w1 + 1, len(weapons)):
             shape_similarity, color_similarity = compare_features(

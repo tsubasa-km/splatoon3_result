@@ -1,12 +1,12 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, LargeBinary
+from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey
 
-Base = declarative_base()
+from models.base import Base
+
 
 class Weapon(Base):
-    __tablename__ = 'weapons'
+    __tablename__ = "weapons"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    sub_weapon = Column(String)
-    special_weapon = Column(String)
+    sub_weapon_id = Column(Integer, ForeignKey("sub_weapons.id"))
+    special_weapon_id = Column(Integer, ForeignKey("special_weapons.id"))
     icon = Column(LargeBinary)

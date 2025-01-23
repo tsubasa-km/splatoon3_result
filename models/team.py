@@ -1,11 +1,12 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 
+from models.base import Base
 
-Base = declarative_base()
 
 class Team(Base):
-    __tablename__ = 'teams'
+    __tablename__ = "teams"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    color = Column(String)
+    is_winner = Column(Boolean)
     score = Column(Integer)
+    game_id = Column(Integer, ForeignKey("games.id"))

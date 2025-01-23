@@ -2,7 +2,10 @@ from PIL import Image
 import numpy as np
 import cv2
 import re
+import os
+import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from modules.ocr import ocr
 
 SCREENSHOT_DIR = "screenshots"
@@ -37,7 +40,5 @@ def get_result(image):
 
 if __name__ == '__main__':
     for i in range(1, 6):
-        result = get_result(f"{SCREENSHOT_DIR}/{i}.jpg")
-        if len(result) != 8:
-            raise Exception(f"Invalid result. length :{len(result)}")
+        result = get_result(cv2.imread(f"{SCREENSHOT_DIR}/{i}.jpg"))
         print(result)
