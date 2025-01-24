@@ -12,6 +12,7 @@ from modules.ocr import ocr
 
 def get_xp(image) -> float:
     image = image[-350:-310, 315:500]
+    image = cv2.resize(image, (0, 0), fx=3, fy=3)
     ocr_text = ocr(Image.fromarray(image), "spl_xp")
     if re.match(r"Xパワー \d*", ocr_text) is None:
         raise Exception(f"Invalid image: {ocr_text}")

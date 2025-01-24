@@ -25,7 +25,10 @@ def __format_result(txt: str):
 
 def __crop_result(img: np.ndarray):
     img = img[300:-350, -280:-25]
+    img = cv2.resize(img, (0, 0), fx=3, fy=3)
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
+    cv2.imshow("result", img)
+    cv2.waitKey(0)
     return img
 
 
