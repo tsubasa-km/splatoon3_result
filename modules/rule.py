@@ -1,6 +1,7 @@
 import cv2
 import os
 import sys
+from typing import Literal
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from modules.image import get_features, compare_features, calculate_overall_similarity
@@ -18,7 +19,7 @@ def __crop_rule(image: cv2.Mat):
     return image[50:130, 200:540]
 
 
-def get_rule_name(image):
+def get_rule_name(image) -> Literal["zone", "tower", "rainmaker", "blitz", "unknown"]:
     image = __crop_rule(image)
     for name, path in RULE_PATHS.items():
         rule = cv2.imread(path)
