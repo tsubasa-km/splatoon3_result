@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 orb = cv2.ORB_create(
     # nfeatures=1000,
     scaleFactor=1.2,
-    edgeThreshold=15
+    edgeThreshold=15,
 )
 
 
@@ -16,15 +16,15 @@ def __extract_features(image):
 
 def __extract_color_histogram(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    hist = cv2.calcHist([hsv_image], [0, 1], None, [50, 60], [
-                        0, 180, 0, 256])  # H:50, S:60
+    hist = cv2.calcHist(
+        [hsv_image], [0, 1], None, [50, 60], [0, 180, 0, 256]
+    )  # H:50, S:60
     cv2.normalize(hist, hist)
     return hist
 
 
 def __display_results(image, keypoints, hist):
-    keypoint_image = cv2.drawKeypoints(
-        image, keypoints, None, color=(0, 255, 0))
+    keypoint_image = cv2.drawKeypoints(image, keypoints, None, color=(0, 255, 0))
 
     plt.figure(figsize=(10, 5))
     plt.subplot(1, 2, 1)
@@ -36,7 +36,7 @@ def __display_results(image, keypoints, hist):
     plt.title("Color Histogram (Hue-Saturation)")
     plt.xlabel("Bins")
     plt.ylabel("Frequency")
-    plt.imshow(hist, interpolation='nearest', aspect='auto', cmap='viridis')
+    plt.imshow(hist, interpolation="nearest", aspect="auto", cmap="viridis")
     plt.colorbar(label="Frequency")
     plt.show()
 
@@ -57,18 +57,28 @@ def compare_features(features_a, features_b):
     if descriptors_a is not None and descriptors_b is not None:
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         matches = bf.match(descriptors_a, descriptors_b)
-        shape_similarity = len(matches) / \
-            max(len(keypoints_a), len(keypoints_b))
+        shape_similarity = len(matches) / max(len(keypoints_a), len(keypoints_b))
     else:
         shape_similarity = 0.0
-    color_similarity = cv2.compareHist(
-        color_hist_a, color_hist_b, cv2.HISTCMP_CORREL)
+    color_similarity = cv2.compareHist(color_hist_a, color_hist_b, cv2.HISTCMP_CORREL)
     return shape_similarity, color_similarity
 
 
-def calculate_overall_similarity(shape_similarity, color_similarity, weight_shape=0.5, weight_color=0.5):
+def calculate_overall_similarity(
+    shape_similarity, color_similarity, weight_shape=0.5, weight_color=0.5
+):
     """形状と色の類似度を統合スコアとして計算"""
     normalized_color_similarity = (color_similarity + 1) / 2
-    overall_similarity = (weight_shape * shape_similarity +
-                          weight_color * normalized_color_similarity)
+    overall_similarity = (
+        weight_shape * shape_similarity + weight_color * normalized_color_similarity
+    )
     return overall_similarity
+
+
+def is_match(features_a, features_b, threshold=0.9):
+    """2つの画像が一致するかどうかを判定"""
+    shape_similarity, color_similarity = compare_features(features_a, features_b)
+    overall_similarity = calculate_overall_similarity(
+        shape_similarity, color_similarity
+    )
+    return overall_similarity >= threshold
