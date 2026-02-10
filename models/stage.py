@@ -6,4 +6,4 @@ from models.base import Base
 class Stage(Base):
     __tablename__ = "stages"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False, unique=True)
