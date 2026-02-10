@@ -9,6 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from modules.ocr import ocr
 
 SCREENSHOT_DIR = "screenshots"
+SHOW_DEBUG_WINDOWS = os.getenv("SHOW_DEBUG_WINDOWS", "0") == "1"
 
 
 def __format_result(txt: str):
@@ -23,20 +24,22 @@ def __format_result(txt: str):
     return tuple(value)
 
 
-def __crop_result(img: np.ndarray):
+def __crop_result(img: np.ndarray, debug: bool = False):
     img = img[300:-350, -280:-25]
     img = cv2.resize(img, (0, 0), fx=3, fy=3)
     _, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
-    cv2.imshow("result", img)
-    cv2.waitKey(0)
+    if debug:
+        cv2.imshow("result", img)
+        cv2.waitKey(0)
+        cv2.destroyWindow("result")
     return img
 
 
-def get_result(image):
+def get_result(image, debug: bool = False):
     if type(image) != np.ndarray:
         raise Exception("Invalid image type")
     gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    results = __crop_result(gray_img)
+    results = __crop_result(gray_img, debug=debug or SHOW_DEBUG_WINDOWS)
     txt = ocr(Image.fromarray(results), "spl_result")
     return __format_result(txt)
 
