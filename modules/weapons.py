@@ -47,6 +47,12 @@ def get_icon_features(image: np.ndarray) -> list:
     return [get_features(weapon) for weapon in weapons]
 
 
+def get_weapon_icon_circles(image: np.ndarray) -> list[tuple[int, int, int]]:
+    """武器アイコンの円情報(x, y, r)を返す"""
+    _, circles = __detect_weapons(image)
+    return circles.copy()
+
+
 if __name__ == "__main__":
     weapons = __crop_icons(*__detect_weapons(cv2.imread(f"screenshots/1.jpg")))
     features = [get_features(icon) for icon in weapons]

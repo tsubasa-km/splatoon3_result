@@ -18,10 +18,14 @@ if HAS_CV2:
     from modules.xp import get_xp
     from modules.results import get_result
     from modules.rule import get_rule_name
+    from modules.player_position import get_my_position
+    from modules.count import get_count
 else:
     get_xp = None
     get_result = None
     get_rule_name = None
+    get_my_position = None
+    get_count = None
 
 
 def _imread(path: str):
@@ -102,3 +106,28 @@ def test_get_result_from_image_path(image, expected):
 @pytest.mark.skipif(not HAS_CV2, reason="cv2 is not available in this environment.")
 def test_get_rule_name(image, expected):
     assert get_rule_name(image) == expected
+
+
+@pytest.mark.parametrize(("image", "expected"), [
+    (_imread('./screenshots/1.jpg'), 4),
+    (_imread('./screenshots/2.jpg'), 2),
+    (_imread('./screenshots/6.jpg'), 3),
+    (_imread('./screenshots/7.jpg'), 5),
+    (_imread('./screenshots/9.jpg'), 1),
+])
+@pytest.mark.skipif(not HAS_CV2, reason="cv2 is not available in this environment.")
+def test_get_my_position(image, expected):
+    assert get_my_position(image) == expected
+
+
+@pytest.mark.parametrize(("image"), [
+    _imread('./screenshots/1.jpg'),
+    _imread('./screenshots/6.jpg'),
+    _imread('./screenshots/9.jpg'),
+])
+@pytest.mark.skipif(not HAS_CV2, reason="cv2 is not available in this environment.")
+def test_get_count_shape(image):
+    count = get_count(image)
+    assert set(count.keys()) == {"left", "right"}
+    assert count["left"] is None or isinstance(count["left"], int)
+    assert count["right"] is None or isinstance(count["right"], int)
